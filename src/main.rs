@@ -20,12 +20,12 @@ fn new_day(year: &str, day: &str) {
         r#"
 use aoc_rust::read_input;
 
-fn part_1(input: &str) -> &str {
-    return "";
+fn part_1(input: &str) -> String {
+    return "".to_string();
 }
 
-fn part_2(input: &str) -> &str {
-    return "";
+fn part_2(input: &str) -> String {
+    return "".to_string();
 }
 
 fn main() {
@@ -42,7 +42,7 @@ mod tests {
     #[ignore]
     #[test]
     fn test_part_1() {
-        let input = r"";
+        let input = r"".trim();
 
         assert_eq!(part_1(input), "");
     }
@@ -50,9 +50,9 @@ mod tests {
     #[ignore]
     #[test]
     fn test_part_2() {
-        let input = r"";
+        let input = r"".trim();
 
-        assert_eq!(part_1(input), "");
+        assert_eq!(part_2(input), "");
     }
 }
 "#

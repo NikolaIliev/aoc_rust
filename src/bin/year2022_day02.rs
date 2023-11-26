@@ -1,11 +1,11 @@
 use aoc_rust::read_input;
 
-fn part_1(input: &str) -> &str {
-    return "";
+fn part_1(input: &str) -> String {
+    return "".to_string();
 }
 
-fn part_2(input: &str) -> &str {
-    return "";
+fn part_2(input: &str) -> String {
+    return "".to_string();
 }
 
 fn main() {

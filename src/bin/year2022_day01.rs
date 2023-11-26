@@ -1,11 +1,31 @@
 use aoc_rust::read_input;
+use itertools::Itertools;
 
-fn part_1(input: &str) -> &str {
-    return "";
+fn part_1(input: &str) -> String {
+    return input
+        .split("\n\n")
+        .map(|elf| {
+            elf.lines()
+                .map(|line| line.parse::<u32>().unwrap())
+                .sum::<u32>()
+        })
+        .max()
+        .unwrap()
+        .to_string();
 }
 
-fn part_2(input: &str) -> &str {
-    return "";
+fn part_2(input: &str) -> String {
+    return input
+        .split("\n\n")
+        .map(|elf| {
+            elf.lines()
+                .map(|line| line.parse::<u32>().unwrap())
+                .sum::<u32>()
+        })
+        .sorted_by(|a, b| b.cmp(a))
+        .take(3)
+        .sum::<u32>()
+        .to_string();
 }
 
 fn main() {
@@ -19,19 +39,47 @@ fn main() {
 mod tests {
     use super::*;
 
-    #[ignore]
     #[test]
     fn test_part_1() {
-        let input = r"";
+        let input = r"
+1000
+2000
+3000
 
-        assert_eq!(part_1(input), "");
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000"
+            .trim();
+
+        assert_eq!(part_1(input), "24000");
     }
 
-    #[ignore]
     #[test]
     fn test_part_2() {
-        let input = r"";
+        let input = r"
+1000
+2000
+3000
 
-        assert_eq!(part_1(input), "");
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000"
+            .trim();
+
+        assert_eq!(part_2(input), "45000");
     }
 }
