@@ -31,8 +31,17 @@ fn part_2(input: &str) -> String {
 fn main() {
     let input = read_input("YEAR", "DAY");
 
-    println!("Part 1: {}", part_1(&input));
-    println!("Part 2: {}", part_2(&input));
+    let start_part_1 = Instant::now();
+    let part_1_result = part_1(&input);
+    let part_1_time = start_part_1.elapsed();
+
+    println!("Part 1: {} ({:?})", part_1_result, part_1_time);
+
+    let start_part_2 = Instant::now();
+    let part_2_result = part_2(&input);
+    let part_2_time = start_part_2.elapsed();
+
+    println!("Part 2: {} ({:?})", part_2_result, part_2_time);
 }
 
 #[cfg(test)]
