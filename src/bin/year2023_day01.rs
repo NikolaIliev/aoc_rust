@@ -1,52 +1,92 @@
 use aoc_rust::read_input;
+use std::time::Instant;
 
 fn part_1(input: &str) -> String {
     input
         .lines()
         .map(|line| {
-            let mut iter = line.chars().filter(|c| c.is_numeric());
-            let first = iter.next().unwrap();
-
-            return format!("{}{}", first, iter.rev().next().unwrap_or(first))
-                .parse::<usize>()
-                .unwrap();
+            format!(
+                "{}{}",
+                line.chars().find(|&c| c.is_numeric()).unwrap(),
+                line.chars().rev().find(|&c| c.is_numeric()).unwrap()
+            )
+            .parse::<usize>()
+            .unwrap()
         })
         .sum::<usize>()
         .to_string()
 }
 
 fn part_2(input: &str) -> String {
-    let digits = vec![
+    let normal_digits = [
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    ];
+    let reversed_digits = [
+        "eno", "owt", "eerht", "ruof", "evif", "xis", "neves", "thgie", "enin",
     ];
 
     input
         .lines()
         .map(|line| {
-            let mut iter = line
-                .chars()
-                .scan(String::new(), |state, c| {
-                    if c.is_numeric() {
-                        *state = String::new();
+            format!(
+                "{}{}",
+                line.chars()
+                    .enumerate()
+                    .scan(String::new(), |state, (idx, c)| {
+                        if idx > 0 && state.is_empty() {
+                            return None;
+                        }
 
-                        return Some(c);
-                    }
+                        if c.is_numeric() {
+                            state.clear();
+                            return Some(c);
+                        }
 
-                    state.push(c);
+                        state.push(c);
 
-                    if let Some(idx) = digits.iter().position(|&digit| state.ends_with(digit)) {
-                        return Some((b'0' + (idx as u8) + 1) as char);
-                    }
+                        if let Some(idx) = normal_digits
+                            .iter()
+                            .position(|&digit| state.ends_with(digit))
+                        {
+                            state.clear();
+                            return Some((b'0' + (idx as u8) + 1) as char);
+                        }
 
-                    return Some('_');
-                })
-                .filter(|c| c.is_numeric());
+                        Some(' ')
+                    })
+                    .find(|&c| c.is_numeric())
+                    .unwrap(),
+                line.chars()
+                    .rev()
+                    .enumerate()
+                    .scan(String::new(), |state, (idx, c)| {
+                        if idx > 0 && state.is_empty() {
+                            return None;
+                        }
 
-            let first = iter.next().unwrap();
+                        if c.is_numeric() {
+                            state.clear();
+                            return Some(c);
+                        }
 
-            format!("{}{}", first, iter.last().unwrap_or(first))
-                .parse::<usize>()
-                .unwrap()
+                        state.push(c);
+
+                        if let Some(idx) = reversed_digits
+                            .iter()
+                            .position(|&digit| state.ends_with(digit))
+                        {
+                            state.clear();
+
+                            return Some((b'0' + (idx as u8) + 1) as char);
+                        }
+
+                        Some(' ')
+                    })
+                    .find(|&c| c.is_numeric())
+                    .unwrap()
+            )
+            .parse::<usize>()
+            .unwrap()
         })
         .sum::<usize>()
         .to_string()
@@ -55,8 +95,17 @@ fn part_2(input: &str) -> String {
 fn main() {
     let input = read_input("2023", "01");
 
-    println!("Part 1: {}", part_1(&input));
-    println!("Part 2: {}", part_2(&input));
+    let start_part_1 = Instant::now();
+    let part_1_result = part_1(&input);
+    let part_1_time = start_part_1.elapsed();
+
+    println!("Part 1: {} ({:?})", part_1_result, part_1_time);
+
+    let start_part_2 = Instant::now();
+    let part_2_result = part_2(&input);
+    let part_2_time = start_part_2.elapsed();
+
+    println!("Part 2: {} ({:?})", part_2_result, part_2_time);
 }
 
 #[cfg(test)]
