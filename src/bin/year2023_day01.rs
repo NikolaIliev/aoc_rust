@@ -95,10 +95,10 @@ zoneight234
     #[test]
     fn test_part_2_2() {
         let input = r"
-zerotwozerotwo9
+zerotwozerotwone
         "
         .trim();
 
-        assert_eq!(part_2(input), "29");
+        assert_eq!(part_2(input), "21");
     }
 }
