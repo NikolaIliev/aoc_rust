@@ -1,4 +1,6 @@
 use aoc_rust::read_input;
+use itertools::FoldWhile::{Continue, Done};
+use itertools::Itertools;
 use std::time::Instant;
 
 fn part_1(input: &str) -> String {
@@ -31,59 +33,45 @@ fn part_2(input: &str) -> String {
             format!(
                 "{}{}",
                 line.chars()
-                    .enumerate()
-                    .scan(String::new(), |state, (idx, c)| {
-                        if idx > 0 && state.is_empty() {
-                            return None;
+                    .fold_while(String::new(), |mut acc, ch| {
+                        if ch.is_numeric() {
+                            Done(ch.to_string())
+                        } else {
+                            acc.push(ch);
+
+                            if let Some(idx) =
+                                normal_digits.iter().position(|&digit| acc.ends_with(digit))
+                            {
+                                let a = (b'0' + (idx as u8) + 1) as char;
+
+                                return Done(a.to_string());
+                            } else {
+                                return Continue(acc);
+                            }
                         }
-
-                        if c.is_numeric() {
-                            state.clear();
-                            return Some(c);
-                        }
-
-                        state.push(c);
-
-                        if let Some(idx) = normal_digits
-                            .iter()
-                            .position(|&digit| state.ends_with(digit))
-                        {
-                            state.clear();
-                            return Some((b'0' + (idx as u8) + 1) as char);
-                        }
-
-                        Some(' ')
                     })
-                    .find(|&c| c.is_numeric())
-                    .unwrap(),
+                    .into_inner(),
                 line.chars()
                     .rev()
-                    .enumerate()
-                    .scan(String::new(), |state, (idx, c)| {
-                        if idx > 0 && state.is_empty() {
-                            return None;
+                    .fold_while(String::new(), |mut acc, ch| {
+                        if ch.is_numeric() {
+                            Done(ch.to_string())
+                        } else {
+                            acc.push(ch);
+
+                            if let Some(idx) = reversed_digits
+                                .iter()
+                                .position(|&digit| acc.ends_with(digit))
+                            {
+                                let a = (b'0' + (idx as u8) + 1) as char;
+
+                                return Done(a.to_string());
+                            } else {
+                                return Continue(acc);
+                            }
                         }
-
-                        if c.is_numeric() {
-                            state.clear();
-                            return Some(c);
-                        }
-
-                        state.push(c);
-
-                        if let Some(idx) = reversed_digits
-                            .iter()
-                            .position(|&digit| state.ends_with(digit))
-                        {
-                            state.clear();
-
-                            return Some((b'0' + (idx as u8) + 1) as char);
-                        }
-
-                        Some(' ')
                     })
-                    .find(|&c| c.is_numeric())
-                    .unwrap()
+                    .into_inner()
             )
             .parse::<usize>()
             .unwrap()
