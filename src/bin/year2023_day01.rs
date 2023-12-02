@@ -87,6 +87,7 @@ fn main() {
     let part_1_result = part_1(&input);
     let part_1_time = start_part_1.elapsed();
 
+    println!();
     println!("Part 1: {} ({:?})", part_1_result, part_1_time);
 
     let start_part_2 = Instant::now();
