@@ -91,7 +91,12 @@ fn test(year: &str, day: &str) {
 
 fn run(year: &str, day: &str) {
     Command::new("cargo")
-        .args(["run", "--bin", &format!("year{}_day{}", year, day)])
+        .args([
+            "run",
+            "--release",
+            "--bin",
+            &format!("year{}_day{}", year, day),
+        ])
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .status()
