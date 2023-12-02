@@ -18,6 +18,8 @@ fn new_day(year: &str, day: &str) {
     fs::write(
         &path_rs,
         r#"
+use std::time::Instant;
+
 use aoc_rust::read_input;
 
 fn part_1(input: &str) -> String {
