@@ -11,7 +11,7 @@ fn is_gear(ch: char) -> bool {
     return ch == '*';
 }
 
-fn get_coords_of_adjacent_parts_that_matches_predicate(
+fn get_coords_of_adjacent_chars_that_match_predicate(
     matrix: &Vec<Vec<char>>,
     x: usize,
     y: usize,
@@ -62,7 +62,7 @@ fn part_1(input: &str) -> String {
                 num_str.push(ch);
                 if !num_has_adjacent_engine_part {
                     num_has_adjacent_engine_part =
-                        !get_coords_of_adjacent_parts_that_matches_predicate(
+                        !get_coords_of_adjacent_chars_that_match_predicate(
                             &matrix,
                             x,
                             y,
@@ -117,7 +117,7 @@ fn part_2(input: &str) -> String {
                 num_str.push(ch);
 
                 for (x, y) in
-                    get_coords_of_adjacent_parts_that_matches_predicate(&matrix, x, y, is_gear)
+                    get_coords_of_adjacent_chars_that_match_predicate(&matrix, x, y, is_gear)
                 {
                     adjacent_gears.insert((x, y));
                 }
