@@ -17,29 +17,17 @@ fn get_coords_of_adjacent_chars_that_match_predicate(
     y: usize,
     predicate: fn(char) -> bool,
 ) -> Vec<(usize, usize)> {
-    let x_i = x as isize;
-    let y_i = y as isize;
-
-    vec![
-        (x_i - 1, y_i - 1),
-        (x_i, y_i - 1),
-        (x_i + 1, y_i - 1),
-        (x_i - 1, y_i),
-        (x_i + 1, y_i),
-        (x_i - 1, y_i + 1),
-        (x_i, y_i + 1),
-        (x_i + 1, y_i + 1),
-    ]
-    .iter()
-    .filter(|(x, y)| {
-        *x >= 0
-            && *y >= 0
-            && *x < matrix[0].len() as isize
-            && *y < matrix.len() as isize
-            && predicate(matrix[*y as usize][*x as usize])
-    })
-    .map(|(x, y)| (*x as usize, *y as usize))
-    .collect_vec()
+    (x as isize - 1..=x as isize + 1)
+        .flat_map(|x| (y as isize - 1..=y as isize + 1).map(move |y| (x, y)))
+        .filter(|(x, y)| {
+            *x >= 0
+                && *y >= 0
+                && *x < matrix[0].len() as isize
+                && *y < matrix.len() as isize
+                && predicate(matrix[*y as usize][*x as usize])
+        })
+        .map(|(x, y)| (x as usize, y as usize))
+        .collect_vec()
 }
 
 fn part_1(input: &str) -> String {
