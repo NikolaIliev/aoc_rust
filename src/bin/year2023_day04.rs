@@ -37,15 +37,23 @@ fn part_1(input: &str) -> String {
 }
 
 fn part_2(input: &str) -> String {
-    let mut card_counts = input.lines().map(|_| 1).collect_vec();
+    input
+        .lines()
+        .map(get_score)
+        .enumerate()
+        .fold(
+            input.lines().map(|_| 1).collect_vec(),
+            |mut card_counts, (i, score)| {
+                for j in 0..score {
+                    card_counts[i + j + 1] += card_counts[i];
+                }
 
-    for (i, score) in input.lines().map(get_score).enumerate() {
-        for j in 0..score {
-            card_counts[i + j + 1] += card_counts[i] - 1;
-        }
-    }
-
-    card_counts.iter().sum::<usize>().to_string()
+                card_counts
+            },
+        )
+        .iter()
+        .sum::<usize>()
+        .to_string()
 }
 
 fn main() {
