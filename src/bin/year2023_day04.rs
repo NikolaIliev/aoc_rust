@@ -4,9 +4,7 @@ use aoc_rust::read_input;
 use itertools::Itertools;
 
 fn get_score(card: &str) -> usize {
-    let (_, nums) = card.split_once(": ").unwrap();
-
-    let (winning_str, own_str) = nums.split_once(" | ").unwrap();
+    let (winning_str, own_str) = card.split_once(": ").unwrap().1.split_once(" | ").unwrap();
 
     let winning_nums = winning_str
         .split_whitespace()
