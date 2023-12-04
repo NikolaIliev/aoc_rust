@@ -8,20 +8,15 @@ fn get_score(card: &str) -> usize {
 
     let (winning_str, own_str) = nums.split_once(" | ").unwrap();
 
-    let own_nums = own_str
-        .split_whitespace()
-        .map(|s| s.parse::<usize>().unwrap())
-        .collect_vec();
-
     let winning_nums = winning_str
         .split_whitespace()
         .map(|s| s.parse::<usize>().unwrap())
-        .sorted()
         .collect_vec();
 
-    own_nums
-        .iter()
-        .filter(|n| winning_nums.binary_search(n).is_ok())
+    own_str
+        .split_whitespace()
+        .map(|s| s.parse::<usize>().unwrap())
+        .filter(|n| winning_nums.contains(n))
         .count()
 }
 
