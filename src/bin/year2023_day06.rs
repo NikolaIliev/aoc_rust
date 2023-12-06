@@ -18,7 +18,7 @@ fn get_solutions_count(time: usize, distance: usize) -> usize {
 
     let (x1, x2) = solve_quadratic(a, b, c);
 
-    (x2.floor() - x1.ceil() + 1.0).round() as usize
+    (x2.floor() - x1.ceil() + 1.0) as usize
 }
 
 fn part_1(input: &str) -> String {
