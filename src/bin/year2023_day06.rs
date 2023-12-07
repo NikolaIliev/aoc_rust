@@ -21,7 +21,7 @@ fn get_solutions_count(time: usize, distance: usize) -> usize {
     (x2.floor() - x1.ceil() + 1.0) as usize
 }
 
-fn part_1(input: &str) -> String {
+fn part_1(input: &str) -> usize {
     let (time_str, distance_str) = input.split_once("\n").unwrap();
 
     time_str
@@ -34,27 +34,29 @@ fn part_1(input: &str) -> String {
         )
         .map(|(time, distance)| get_solutions_count(time, distance))
         .product::<usize>()
-        .to_string()
 }
 
-fn part_2(input: &str) -> String {
+fn part_2(input: &str) -> usize {
     let (time_str, distance_str) = input.split_once("\n").unwrap();
 
     get_solutions_count(
         time_str
+            .split_once(":")
+            .unwrap()
+            .1
             .split_whitespace()
-            .filter(|s| s.parse::<usize>().is_ok())
             .join("")
             .parse::<usize>()
             .unwrap(),
         distance_str
+            .split_once(":")
+            .unwrap()
+            .1
             .split_whitespace()
-            .filter(|s| s.parse::<usize>().is_ok())
             .join("")
             .parse::<usize>()
             .unwrap(),
     )
-    .to_string()
 }
 
 fn main() {
@@ -86,7 +88,7 @@ Distance:  9  40  200
         "
         .trim();
 
-        assert_eq!(part_1(input), "288");
+        assert_eq!(part_1(input), 288);
     }
 
     #[test]
@@ -97,6 +99,6 @@ Distance:  9  40  200
         "
         .trim();
 
-        assert_eq!(part_2(input), "71503");
+        assert_eq!(part_2(input), 71503);
     }
 }
