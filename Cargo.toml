@@ -8,3 +8,4 @@ default-run = "aoc_rust"
 
 [dependencies]
 itertools = "0.12.0"
+rayon = "1.8.0"
