@@ -3,9 +3,6 @@ use std::time::Instant;
 use aoc_rust::read_input;
 use itertools::Itertools;
 
-const CARD_TYPES_COUNT: usize = 13;
-const CARD_RANKS_COUNT: usize = 7;
-
 fn quantize_card(card: char, joker: bool) -> usize {
     match card {
         'A' => 14,
@@ -49,7 +46,7 @@ fn quantize_hand(hand: &str, joker: bool) -> usize {
         }
     }
 
-    let power = match card_groups.len() {
+    let hand_rank = match card_groups.len() {
         // 5 unique cards -> "High card"
         5 => 0,
         // 4 unique cards -> "One pair"
@@ -80,10 +77,12 @@ fn quantize_hand(hand: &str, joker: bool) -> usize {
         .chars()
         .map(|card| quantize_card(card, joker))
         .enumerate()
-        .map(|(idx, card_score)| (CARD_TYPES_COUNT + 1).pow(5 - idx as u32) as usize * card_score)
+        // 14 -> max card score
+        .map(|(idx, card_score)| (14 as usize).pow(5 - idx as u32) as usize * card_score)
         .sum::<usize>();
 
-    (CARD_RANKS_COUNT + CARD_TYPES_COUNT + 1).pow(power + 5) + hand_sum
+    // base must be large enough to not have collisions between different hand ranks
+    (10 as usize).pow(hand_rank + 10) + hand_sum
 }
 
 fn part_1(input: &str) -> String {
