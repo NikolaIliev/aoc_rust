@@ -1,26 +1,32 @@
 use std::{collections::HashMap, time::Instant};
 
 use aoc_rust::read_input;
+use itertools::Itertools;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
-#[derive(Debug, Default)]
+// solutions use Vecs instead of HashMaps because of very frequent lookups
+// O(1) access in contiguous memory (Vec) wins over O(1) access in non-contiguous memory (HashMap)
+// also HashMap has the overhead of .. you know, hashing
+//
+// just wanted a sub-1ms solution..
+
+#[derive(Debug)]
 struct Node<'a> {
     id: &'a str,
-    left_id: &'a str,
-    right_id: &'a str,
     left_idx: usize,
     right_idx: usize,
+    // these are pretty much helpers as I couldn't figure out a better way
+    // to build the nodes and their index links
+    left_id: &'a str,
+    right_id: &'a str,
 }
 
-fn part_1<'a>(input: &'a str) -> String {
-    let (instructions_str, nodes_str) = input.split_once("\n\n").unwrap();
-    let mut instructions_iter = instructions_str.chars().cycle();
+fn nodes_from_str(s: &str) -> Vec<Node> {
     let mut nodes: Vec<Node> = Vec::new();
-    let mut indices: HashMap<&'a str, usize> = HashMap::new();
-    let mut iterations = 0;
-    let mut current = 0;
+    // helper hash map to build out `nodes`
+    let mut indices: HashMap<&str, usize> = HashMap::new();
 
-    for line in nodes_str.lines() {
+    for line in s.lines() {
         let idx = nodes.len();
         let id = &line[0..3];
         let left_id = &line[7..10];
@@ -34,10 +40,6 @@ fn part_1<'a>(input: &'a str) -> String {
             right_idx: 0,
         });
         indices.insert(id, idx);
-
-        if id == "AAA" {
-            current = idx;
-        }
     }
 
     for node in nodes.iter_mut() {
@@ -45,16 +47,36 @@ fn part_1<'a>(input: &'a str) -> String {
         node.right_idx = *indices.get(node.right_id).unwrap();
     }
 
-    while nodes[current].id != "ZZZ" {
+    nodes
+}
+
+fn next_index(node: &Node, instruction: char) -> usize {
+    match instruction {
+        'L' => node.left_idx,
+        'R' => node.right_idx,
+        _ => 0,
+    }
+}
+
+fn part_1(input: &str) -> String {
+    let (instructions_str, nodes_str) = input.split_once("\n\n").unwrap();
+    let mut instructions_iter = instructions_str.chars().cycle();
+    let nodes = nodes_from_str(nodes_str);
+
+    let mut iterations = 0;
+    let mut idx = nodes
+        .iter()
+        .enumerate()
+        .find(|(_, node)| node.id == "AAA")
+        .unwrap()
+        .0;
+
+    while nodes[idx].id != "ZZZ" {
         iterations += 1;
 
         let instruction = instructions_iter.next().unwrap();
 
-        current = if instruction == 'L' {
-            nodes[current].left_idx
-        } else {
-            nodes[current].right_idx
-        };
+        idx = next_index(&nodes[idx], instruction);
     }
 
     iterations.to_string()
@@ -74,38 +96,21 @@ fn lcm(a: usize, b: usize) -> usize {
     a * b / gcd(a, b)
 }
 
-fn part_2<'a>(input: &'a str) -> String {
+fn part_2(input: &str) -> String {
     let (instructions_str, nodes_str) = input.split_once("\n\n").unwrap();
-    let mut nodes: Vec<Node> = Vec::new();
-    let mut starting_node_indexes: Vec<usize> = Vec::new();
-    let mut indices: HashMap<&'a str, usize> = HashMap::new();
+    let nodes = nodes_from_str(nodes_str);
 
-    for line in nodes_str.lines() {
-        let idx = nodes.len();
-        let id = &line[0..3];
-        let left_id = &line[7..10];
-        let right_id = &line[12..15];
-
-        nodes.push(Node {
-            id,
-            left_id,
-            right_id,
-            left_idx: 0,
-            right_idx: 0,
-        });
-        indices.insert(id, idx);
-
-        if &id[2..] == "A" {
-            starting_node_indexes.push(idx);
-        }
-    }
-
-    for node in nodes.iter_mut() {
-        node.left_idx = *indices.get(node.left_id).unwrap();
-        node.right_idx = *indices.get(node.right_id).unwrap();
-    }
-
-    starting_node_indexes
+    nodes
+        .iter()
+        .enumerate()
+        .filter_map(|(idx, node)| {
+            if &node.id[2..] == "A" {
+                Some(idx)
+            } else {
+                None
+            }
+        })
+        .collect_vec()
         .par_iter()
         .map(|&idx| {
             let mut instructions_iter = instructions_str.chars().cycle();
@@ -118,10 +123,10 @@ fn part_2<'a>(input: &'a str) -> String {
                 cycle_end += 1;
                 let instruction = instructions_iter.next().unwrap();
 
-                current = if instruction == 'L' {
-                    nodes[current].left_idx
-                } else {
-                    nodes[current].right_idx
+                current = match instruction {
+                    'L' => nodes[current].left_idx,
+                    'R' => nodes[current].right_idx,
+                    _ => current,
                 };
 
                 let last_char = *nodes[current].id.as_bytes().last().unwrap() as char;
