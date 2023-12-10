@@ -1,112 +1,6 @@
 use std::time::Instant;
 
 use aoc_rust::read_input;
-use itertools::Itertools;
-
-fn print_matrix<T>(matrix: &Vec<Vec<T>>)
-where
-    T: ToString,
-{
-    println!(
-        "SCALED -> \n{}",
-        matrix
-            .iter()
-            .map(|row| row.iter().map(|n| n.to_string()).join(""))
-            .join("\n")
-    );
-}
-
-fn part_1(input: &str) -> String {
-    let (matrix, start_pos) = parse_input(input);
-    let mut loop_path: Vec<(usize, usize)> = vec![];
-
-    let start_center_pos = (start_pos.0 + 1, start_pos.1 + 1);
-
-    find_loop(
-        &matrix,
-        start_center_pos,
-        start_center_pos,
-        start_center_pos,
-        &mut loop_path,
-    );
-
-    (loop_path.len() / 6).to_string()
-}
-
-fn fill(scaled_matrix: &mut Vec<Vec<u8>>, pos: (usize, usize), fill_with: u8, avoid: u8) {
-    let (x, y) = pos;
-    scaled_matrix[y as usize][x as usize] = fill_with;
-
-    if x < scaled_matrix[y].len() - 1
-        && scaled_matrix[y][(x) + 1] != avoid
-        && scaled_matrix[y][(x) + 1] != fill_with
-    {
-        fill(scaled_matrix, (x + 1, y), fill_with, avoid);
-    }
-
-    if (y) < scaled_matrix.len() - 1
-        && scaled_matrix[(y) + 1][x] != avoid
-        && scaled_matrix[(y) + 1][x] != fill_with
-    {
-        fill(scaled_matrix, (x, y + 1), fill_with, avoid);
-    }
-
-    if x > 0 && scaled_matrix[y][(x) - 1] != avoid && scaled_matrix[y][(x) - 1] != fill_with {
-        fill(scaled_matrix, (x - 1, y), fill_with, avoid);
-    }
-
-    if y > 0 && scaled_matrix[(y) - 1][x] != avoid && scaled_matrix[(y) - 1][x] != fill_with {
-        fill(scaled_matrix, (x, y - 1), fill_with, avoid);
-    }
-}
-
-fn find_loop(
-    matrix: &Vec<Vec<u8>>,
-    current_pos: (usize, usize),
-    prev_pos: (usize, usize),
-    start_pos: (usize, usize),
-    path: &mut Vec<(usize, usize)>,
-) {
-    if !path.is_empty() && current_pos == start_pos {
-        return;
-    }
-
-    path.push(current_pos);
-
-    let (x, y) = current_pos;
-
-    if matrix[y][x + 1] == 1 {
-        let new_pos = (x + 1, y);
-
-        if new_pos != prev_pos {
-            return find_loop(matrix, new_pos, current_pos, start_pos, path);
-        }
-    }
-
-    if matrix[y][x - 1] == 1 {
-        let new_pos = (x - 1, y);
-
-        if new_pos != prev_pos {
-            return find_loop(matrix, new_pos, current_pos, start_pos, path);
-        }
-    }
-
-    if matrix[y + 1][x] == 1 {
-        let new_pos = (x, y + 1);
-
-        if new_pos != prev_pos {
-            return find_loop(matrix, new_pos, current_pos, start_pos, path);
-        }
-    }
-
-    if matrix[y - 1][x] == 1 {
-        let new_pos = (x, y - 1);
-
-        if new_pos != prev_pos {
-            return find_loop(matrix, new_pos, current_pos, start_pos, path);
-        }
-    }
-}
 
 fn parse_input(input: &str) -> (Vec<Vec<u8>>, (usize, usize)) {
     let mut start_pos: (usize, usize) = (0, 0);
@@ -193,6 +87,98 @@ fn parse_input(input: &str) -> (Vec<Vec<u8>>, (usize, usize)) {
     }
 
     (matrix, start_pos)
+}
+
+fn find_loop(
+    matrix: &Vec<Vec<u8>>,
+    current_pos: (usize, usize),
+    prev_pos: (usize, usize),
+    start_pos: (usize, usize),
+    path: &mut Vec<(usize, usize)>,
+) {
+    if !path.is_empty() && current_pos == start_pos {
+        return;
+    }
+
+    path.push(current_pos);
+
+    let (x, y) = current_pos;
+
+    if matrix[y][x + 1] == 1 {
+        let new_pos = (x + 1, y);
+
+        if new_pos != prev_pos {
+            return find_loop(matrix, new_pos, current_pos, start_pos, path);
+        }
+    }
+
+    if matrix[y][x - 1] == 1 {
+        let new_pos = (x - 1, y);
+
+        if new_pos != prev_pos {
+            return find_loop(matrix, new_pos, current_pos, start_pos, path);
+        }
+    }
+
+    if matrix[y + 1][x] == 1 {
+        let new_pos = (x, y + 1);
+
+        if new_pos != prev_pos {
+            return find_loop(matrix, new_pos, current_pos, start_pos, path);
+        }
+    }
+
+    if matrix[y - 1][x] == 1 {
+        let new_pos = (x, y - 1);
+
+        if new_pos != prev_pos {
+            return find_loop(matrix, new_pos, current_pos, start_pos, path);
+        }
+    }
+}
+
+fn part_1(input: &str) -> String {
+    let (matrix, start_pos) = parse_input(input);
+    let mut loop_path: Vec<(usize, usize)> = vec![];
+
+    let start_center_pos = (start_pos.0 + 1, start_pos.1 + 1);
+
+    find_loop(
+        &matrix,
+        start_center_pos,
+        start_center_pos,
+        start_center_pos,
+        &mut loop_path,
+    );
+
+    (loop_path.len() / 6).to_string()
+}
+
+fn fill(scaled_matrix: &mut Vec<Vec<u8>>, pos: (usize, usize), fill_with: u8, avoid: u8) {
+    let (x, y) = pos;
+    scaled_matrix[y as usize][x as usize] = fill_with;
+
+    if x < scaled_matrix[y].len() - 1
+        && scaled_matrix[y][(x) + 1] != avoid
+        && scaled_matrix[y][(x) + 1] != fill_with
+    {
+        fill(scaled_matrix, (x + 1, y), fill_with, avoid);
+    }
+
+    if (y) < scaled_matrix.len() - 1
+        && scaled_matrix[(y) + 1][x] != avoid
+        && scaled_matrix[(y) + 1][x] != fill_with
+    {
+        fill(scaled_matrix, (x, y + 1), fill_with, avoid);
+    }
+
+    if x > 0 && scaled_matrix[y][(x) - 1] != avoid && scaled_matrix[y][(x) - 1] != fill_with {
+        fill(scaled_matrix, (x - 1, y), fill_with, avoid);
+    }
+
+    if y > 0 && scaled_matrix[(y) - 1][x] != avoid && scaled_matrix[(y) - 1][x] != fill_with {
+        fill(scaled_matrix, (x, y - 1), fill_with, avoid);
+    }
 }
 
 fn part_2(input: &str) -> String {
