@@ -5,26 +5,24 @@ use aoc_rust::read_input;
 fn get_galaxies(input: &str, expansion_factor: usize) -> Vec<(usize, usize)> {
     let height = input.lines().count();
     let width = input.lines().next().unwrap().chars().count();
-    let mut galaxies =
-        input
-            .lines()
-            .enumerate()
-            .fold(Vec::<(usize, usize)>::new(), |mut vec, (y, line)| {
-                for (x, ch) in line.chars().enumerate() {
-                    if ch == '#' {
-                        vec.push((x, y));
-                    }
+    let (mut galaxies, galaxy_xs, galaxy_ys) = input.lines().enumerate().fold(
+        (
+            Vec::<(usize, usize)>::new(),
+            HashSet::<usize>::new(),
+            HashSet::<usize>::new(),
+        ),
+        |(mut vec, mut xs, mut ys), (y, line)| {
+            for (x, ch) in line.chars().enumerate() {
+                if ch == '#' {
+                    vec.push((x, y));
+                    xs.insert(x);
+                    ys.insert(y);
                 }
+            }
 
-                vec
-            });
-    let mut galaxy_xs: HashSet<usize> = HashSet::new();
-    let mut galaxy_ys: HashSet<usize> = HashSet::new();
-
-    for (x, y) in &galaxies {
-        galaxy_xs.insert(*x);
-        galaxy_ys.insert(*y);
-    }
+            (vec, xs, ys)
+        },
+    );
 
     let x_gaps: Vec<usize> = (0..width)
         .fold(
