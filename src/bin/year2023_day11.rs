@@ -61,9 +61,7 @@ fn get_galaxies(input: &str, expansion_factor: usize) -> Vec<(usize, usize)> {
     galaxies
 }
 
-fn part_1(input: &str) -> String {
-    let galaxies = get_galaxies(input, 2);
-
+fn get_sum_of_distances(galaxies: &Vec<(usize, usize)>) -> usize {
     let mut sum = 0;
 
     for i in 0..galaxies.len() {
@@ -75,24 +73,15 @@ fn part_1(input: &str) -> String {
         }
     }
 
-    sum.to_string()
+    sum
+}
+
+fn part_1(input: &str) -> String {
+    get_sum_of_distances(&get_galaxies(input, 2)).to_string()
 }
 
 fn part_2(input: &str) -> String {
-    let galaxies = get_galaxies(input, 1_000_000);
-
-    let mut sum = 0;
-
-    for i in 0..galaxies.len() {
-        for j in i + 1..galaxies.len() {
-            let (x_a, y_a) = galaxies[i];
-            let (x_b, y_b) = galaxies[j];
-
-            sum += x_a.abs_diff(x_b) + y_a.abs_diff(y_b);
-        }
-    }
-
-    sum.to_string()
+    get_sum_of_distances(&get_galaxies(input, 1_000_000)).to_string()
 }
 
 fn main() {
