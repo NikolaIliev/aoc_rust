@@ -62,6 +62,17 @@ fn find_solutions(
     //if let Some(ch) = char { ch } else { &'?' }
     //);
 
+    if count_idx == counts.len() - 1 && counts[count_idx] == current_count_idx_found {
+        if chars[char_idx..chars.len()]
+            .iter()
+            .find(|&ch| *ch == '#')
+            .is_some()
+        {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
     // reached end
     if char.is_none() {
         return if count_idx == counts.len() - 1 && current_count_idx_found == counts[count_idx]
@@ -128,26 +139,38 @@ fn find_solutions(
         }
         '?' => {
             //println!("FORKING({char_idx}) .");
-            let dot = find_solutions(
-                chars,
-                counts,
-                Some(&'.'),
-                char_idx,
-                count_idx,
-                current_count_idx_found,
-                cache,
-            );
+            let dot = if current_count_idx_found > 0 && current_count_idx_found < counts[count_idx]
+            {
+                //println!("Skipping . fork");
+                0
+            } else {
+                find_solutions(
+                    chars,
+                    counts,
+                    Some(&'.'),
+                    char_idx,
+                    count_idx,
+                    current_count_idx_found,
+                    cache,
+                )
+            };
 
             //println!("FORKING({char_idx}) #");
-            let hash = find_solutions(
-                chars,
-                counts,
-                Some(&'#'),
-                char_idx,
-                count_idx,
-                current_count_idx_found,
-                cache,
-            );
+            let hash = if count_idx >= counts.len() || current_count_idx_found == counts[count_idx]
+            {
+                //println!("Skipping # fork");
+                0
+            } else {
+                find_solutions(
+                    chars,
+                    counts,
+                    Some(&'#'),
+                    char_idx,
+                    count_idx,
+                    current_count_idx_found,
+                    cache,
+                )
+            };
 
             //println!("FORK({char_idx}) RESULT: {dot} + {hash}");
 
