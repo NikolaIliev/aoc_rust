@@ -139,6 +139,7 @@ fn part_2(input: &str) -> String {
         for i in (0..matrices.len()).rev() {
             if equal(&matrix, &matrices[i]) {
                 loop_size = cycles - i;
+                break;
             }
         }
 
