@@ -53,7 +53,9 @@ fn solve(input: &str, skip: u8, max_forward: u8) -> String {
         // left/right -> go top/bottom
         // top/bottom -> go left/right
         for j in [-1, 1] {
-            let mut new_loc_heat_loss_add = 0;
+            // as we're directly adding multiple in one direction,
+            // we need to accumulate their heat_loss to enqueue with a correct prio
+            let mut new_loc_heat_loss_acc = 0;
             // enqueue up to the max forward nodes in both directions
             for i in 1..=max_forward {
                 let new_dir = (direction.0 * j, direction.1 * j);
@@ -63,14 +65,14 @@ fn solve(input: &str, skip: u8, max_forward: u8) -> String {
                 );
 
                 if is_valid_location(&matrix, new_loc) {
-                    new_loc_heat_loss_add +=
+                    new_loc_heat_loss_acc +=
                         matrix[new_loc.1 as usize][new_loc.0 as usize] as isize;
 
                     if i < skip {
                         continue;
                     }
 
-                    let new_loc_heat_loss = -heat_loss + new_loc_heat_loss_add;
+                    let new_loc_heat_loss = -heat_loss + new_loc_heat_loss_acc;
 
                     if (new_loc_heat_loss as usize)
                         <= min_heat_losses[new_loc.1 as usize][new_loc.0 as usize]
