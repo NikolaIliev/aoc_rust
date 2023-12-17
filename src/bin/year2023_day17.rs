@@ -64,25 +64,27 @@ fn solve(input: &str, skip: u8, max_forward: u8) -> String {
                     y + (new_dir.1 * i as i8) as isize,
                 );
 
-                if is_valid_location(&matrix, new_loc) {
-                    new_loc_heat_loss_acc +=
-                        matrix[new_loc.1 as usize][new_loc.0 as usize] as isize;
+                if !is_valid_location(&matrix, new_loc) {
+                    // if this one is not valid (out of matrix) then the rest won't be too
+                    break;
+                }
 
-                    if i < skip {
-                        continue;
-                    }
+                new_loc_heat_loss_acc += matrix[new_loc.1 as usize][new_loc.0 as usize] as isize;
 
-                    let new_loc_heat_loss = -heat_loss + new_loc_heat_loss_acc;
+                if i < skip {
+                    continue;
+                }
 
-                    if (new_loc_heat_loss as usize)
-                        <= min_heat_losses[new_loc.1 as usize][new_loc.0 as usize]
-                            [quantize_direction(new_dir)]
-                    {
-                        min_heat_losses[new_loc.1 as usize][new_loc.0 as usize]
-                            [quantize_direction(new_dir)] = new_loc_heat_loss as usize;
+                let new_loc_heat_loss = -heat_loss + new_loc_heat_loss_acc;
 
-                        pq.push((new_loc, (new_dir.1, new_dir.0)), -new_loc_heat_loss);
-                    }
+                if (new_loc_heat_loss as usize)
+                    <= min_heat_losses[new_loc.1 as usize][new_loc.0 as usize]
+                        [quantize_direction(new_dir)]
+                {
+                    min_heat_losses[new_loc.1 as usize][new_loc.0 as usize]
+                        [quantize_direction(new_dir)] = new_loc_heat_loss as usize;
+
+                    pq.push((new_loc, (new_dir.1, new_dir.0)), -new_loc_heat_loss);
                 }
             }
         }
