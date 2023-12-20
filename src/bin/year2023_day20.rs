@@ -177,6 +177,8 @@ fn part_2(input: &str) -> String {
     // fortunately they all fire a high pulse periodically and the loop starts at 0
     // so we just find the first time each fires a high pulse, and then multiply those numbers
     // together to find the first time they'll all fire a high pulse at the same time...
+    //
+    // lcm is not needed because the loop lengths are always primes (thanks AoC creator)
     let mut first_sent_high_pulse_at: Vec<usize> = vec![0; modules.len()];
 
     loop {
