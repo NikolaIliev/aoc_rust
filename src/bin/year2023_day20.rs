@@ -9,7 +9,7 @@ const BROADCAST_MODULE_HASHED_ID: usize = 0;
 enum Module {
     Broadcaster(Vec<usize>),
     FlipFlop((Vec<usize>, bool)),
-    Conjuction((Vec<usize>, Vec<(usize, bool)>)),
+    Conjunction((Vec<usize>, Vec<(usize, bool)>)),
 }
 
 impl Module {
@@ -30,7 +30,7 @@ impl Module {
                     Box::new(outputs.iter().map(move |&output| (output, *on)))
                 }
             }
-            Module::Conjuction((outputs, state)) => {
+            Module::Conjunction((outputs, state)) => {
                 for (idx, remembered_high) in state.iter_mut() {
                     if *idx == input_idx {
                         *remembered_high = high;
@@ -85,14 +85,14 @@ fn parse_modules(input: &str) -> Vec<Module> {
 
                 match type_and_id_str.chars().next().unwrap() {
                     '%' => modules[hashed_id] = Module::FlipFlop((outputs, false)),
-                    '&' => modules[hashed_id] = Module::Conjuction((outputs, vec![])),
+                    '&' => modules[hashed_id] = Module::Conjunction((outputs, vec![])),
                     _ => unreachable!(),
                 }
             }
         };
     }
 
-    // populate conjuction inputs
+    // populate conjunction inputs
     for line in input.lines() {
         let (type_and_id_str, outputs_str) = line.split_once(" -> ").unwrap();
 
@@ -104,7 +104,7 @@ fn parse_modules(input: &str) -> Vec<Module> {
 
         for output_id in outputs_str.split(", ") {
             if let Some(module) = modules.get_mut(hash_module_id(output_id)) {
-                if let Module::Conjuction((_, state)) = module {
+                if let Module::Conjunction((_, state)) = module {
                     state.push((hash_module_id(id), false))
                 };
             }
@@ -152,7 +152,7 @@ fn part_2(input: &str) -> String {
         .iter()
         .enumerate()
         .find_map(|(idx, module)| {
-            if let Module::Conjuction((outputs, _)) = module {
+            if let Module::Conjunction((outputs, _)) = module {
                 if outputs.iter().any(|&idx| idx == rx_hashed) {
                     Some(idx)
                 } else {
@@ -164,11 +164,11 @@ fn part_2(input: &str) -> String {
         })
         .unwrap();
 
-    // the ids of the conjuction modules that feed into the conjuction module that feeds into rx
+    // the ids of the conjunction modules that feed into the conjunction module that feeds into rx
     // all of these must send a high pulse so that the "rx_input" module will fire a Low pulse at
     // rx
-    let linked_conjuction_modules: Vec<usize> =
-        if let Module::Conjuction((_, state)) = &mut modules[rx_input] {
+    let linked_conjunction_modules: Vec<usize> =
+        if let Module::Conjunction((_, state)) = &mut modules[rx_input] {
             state.iter().map(|(id, _)| *id).collect_vec()
         } else {
             vec![]
@@ -195,11 +195,11 @@ fn part_2(input: &str) -> String {
             }
         }
 
-        if !linked_conjuction_modules
+        if !linked_conjunction_modules
             .iter()
             .any(|&idx| first_sent_high_pulse_at[idx] == 0)
         {
-            return linked_conjuction_modules
+            return linked_conjunction_modules
                 .iter()
                 .map(|&idx| first_sent_high_pulse_at[idx])
                 .product::<usize>()
