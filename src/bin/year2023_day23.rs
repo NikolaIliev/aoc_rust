@@ -243,21 +243,25 @@ fn part_2(input: &str) -> String {
     }
 
     let mut max_steps = 0;
+    let target_idx = graph.len() - 1;
 
+    // (index, steps, visited)
+    // due to the small amount of nodes in the graph, we can store visited
+    // as a single u64 (usize) and manipulate bits to indicate which indices
+    // have been visited
     let mut pq: Vec<(usize, usize, usize)> = vec![(0, 0, 0)];
 
     while !pq.is_empty() {
         let (idx, steps, visited) = pq.pop().unwrap();
 
-        if idx == graph.len() - 1 {
+        if idx == target_idx {
             max_steps = max_steps.max(steps);
             continue;
         }
 
         for &(next_idx, next_steps) in &graph[idx] {
             if visited & (1 << next_idx) == 0 {
-                let new_visited = visited | (1 << next_idx);
-                pq.push((next_idx, steps + next_steps, new_visited));
+                pq.push((next_idx, steps + next_steps, visited | (1 << next_idx)));
             }
         }
     }
