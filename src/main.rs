@@ -1,8 +1,7 @@
 use std::{
     env, fs,
-    io::Stdout,
     path::Path,
-    process::{Command, ExitStatus, Stdio},
+    process::{Command, Stdio},
     thread::sleep,
     time::Duration,
 };
