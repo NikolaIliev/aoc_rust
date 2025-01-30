@@ -1,7 +1,10 @@
 use std::{
     env, fs,
+    io::Stdout,
     path::Path,
-    process::{Command, Stdio},
+    process::{Command, ExitStatus, Stdio},
+    thread::sleep,
+    time::Duration,
 };
 
 fn new_day(year: &str, day: &str) {
@@ -80,13 +83,38 @@ mod tests {
     println!("Created {}", path_input.display());
 }
 
-fn test(year: &str, day: &str) {
-    Command::new("cargo-watch")
-        .args(["-x", &format!("test --bin year{}_day{}", year, day)])
+fn check_cargo_watch_installed() -> bool {
+    return Command::new("which")
+        .args(["cargo-watch"])
+        .status()
+        .unwrap()
+        .success();
+}
+
+fn install_cargo_watch() {
+    println!("cargo-watch missing. Installing now...");
+    sleep(Duration::from_secs(3));
+
+    Command::new("cargo")
+        .args(["install", "cargo-watch"])
         .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
         .status()
         .unwrap();
+
+    println!("cargo-watch installed. Please run command again");
+}
+
+fn test(year: &str, day: &str) {
+    if !check_cargo_watch_installed() {
+        install_cargo_watch()
+    } else {
+        Command::new("cargo-watch")
+            .args(["-x", &format!("test --bin year{}_day{}", year, day)])
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .status()
+            .unwrap();
+    }
 }
 
 fn run(year: &str, day: &str) {
