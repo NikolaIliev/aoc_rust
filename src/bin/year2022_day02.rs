@@ -86,8 +86,6 @@ fn part_1(input: &str) -> String {
 }
 
 fn part_2(input: &str) -> String {
-    impl Outcome {}
-
     return input
         .lines()
         .map(|line| {

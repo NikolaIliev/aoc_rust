@@ -7,10 +7,8 @@ use itertools::Itertools;
 struct Hailstone {
     x: f64,
     y: f64,
-    z: f64,
     dx: f64,
     dy: f64,
-    dz: f64,
 }
 
 fn parse_hailstones(input: &str) -> Vec<Hailstone> {
@@ -18,26 +16,19 @@ fn parse_hailstones(input: &str) -> Vec<Hailstone> {
         .lines()
         .map(|line| {
             let (vals, speeds) = line.split_once(" @ ").unwrap();
-            let (x, y, z) = vals
+            let (x, y) = vals
                 .split(", ")
                 .map(|s| s.trim().parse::<f64>().unwrap())
                 .collect_tuple()
                 .unwrap();
 
-            let (dx, dy, dz) = speeds
+            let (dx, dy) = speeds
                 .split(", ")
                 .map(|s| s.trim().parse::<f64>().unwrap())
                 .collect_tuple()
                 .unwrap();
 
-            Hailstone {
-                x,
-                y,
-                z,
-                dx,
-                dy,
-                dz,
-            }
+            Hailstone { x, y, dx, dy }
         })
         .collect_vec()
 }

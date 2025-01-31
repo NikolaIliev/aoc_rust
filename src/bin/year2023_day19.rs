@@ -35,7 +35,7 @@ struct Part {
     s: usize,
 }
 
-fn parse_workflows<'a>(workflows_str: &'a str) -> HashMap<&str, Workflow<'a>> {
+fn parse_workflows<'a>(workflows_str: &'a str) -> HashMap<&'a str, Workflow<'a>> {
     workflows_str.lines().fold(
         HashMap::<&str, Workflow<'a>>::new(),
         |mut workflows, line| {

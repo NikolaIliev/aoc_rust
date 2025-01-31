@@ -1,4 +1,4 @@
-use std::{iter::from_fn, time::Instant};
+use std::time::Instant;
 
 use aoc_rust::read_input;
 use itertools::Itertools;
