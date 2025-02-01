@@ -3,7 +3,7 @@ use std::time::Instant;
 use aoc_rust::read_input;
 use nom::{
     branch::alt,
-    bytes::complete::{tag, take, take_until},
+    bytes::complete::{tag, take_until},
     character::complete::{anychar, usize},
     combinator::{cut, opt},
     multi::{fold_many0, many_till},
@@ -134,4 +134,3 @@ xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
         assert_eq!(part_2(input), "48");
     }
 }
-
