@@ -14,7 +14,7 @@ fn part_1(input: &str) -> String {
                 continue;
             }
 
-            for direction in Direction::all().iter() {
+            for &direction in Direction::all().iter() {
                 m.set_position(x, y);
 
                 for target_letter_index in 1..TARGET_LETTERS.len() {
@@ -49,14 +49,14 @@ fn part_2(input: &str) -> String {
 
             m.set_position(x, y);
 
-            if ((m.peek_in_dir(&Direction::UpLeft) == Some('S')
-                && m.peek_in_dir(&Direction::DownRight) == Some('M'))
-                || (m.peek_in_dir(&Direction::UpLeft) == Some('M')
-                    && m.peek_in_dir(&Direction::DownRight) == Some('S')))
-                && ((m.peek_in_dir(&Direction::UpRight) == Some('S')
-                    && m.peek_in_dir(&Direction::DownLeft) == Some('M'))
-                    || (m.peek_in_dir(&Direction::UpRight) == Some('M')
-                        && m.peek_in_dir(&Direction::DownLeft) == Some('S')))
+            if ((m.peek_in_dir(Direction::UpLeft) == Some('S')
+                && m.peek_in_dir(Direction::DownRight) == Some('M'))
+                || (m.peek_in_dir(Direction::UpLeft) == Some('M')
+                    && m.peek_in_dir(Direction::DownRight) == Some('S')))
+                && ((m.peek_in_dir(Direction::UpRight) == Some('S')
+                    && m.peek_in_dir(Direction::DownLeft) == Some('M'))
+                    || (m.peek_in_dir(Direction::UpRight) == Some('M')
+                        && m.peek_in_dir(Direction::DownLeft) == Some('S')))
             {
                 x_mas_count += 1;
             }

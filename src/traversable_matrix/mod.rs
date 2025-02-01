@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use std::str::FromStr;
 
 use crate::{direction::Direction, uvec2::UVec2};
@@ -7,7 +7,7 @@ use crate::{direction::Direction, uvec2::UVec2};
 #[derive(Debug)]
 pub struct TraversableMatrix<T>
 where
-    T: FromStr,
+    T: FromStr + Display,
 {
     pub matrix: Vec<Vec<T>>,
     pub width: usize,
@@ -17,7 +17,7 @@ where
 
 impl<T> TraversableMatrix<T>
 where
-    T: FromStr + Copy,
+    T: FromStr + Display + Copy,
     <T as FromStr>::Err: Debug,
 {
     pub fn from_str(s: &str) -> TraversableMatrix<T> {
@@ -67,62 +67,62 @@ where
         self.position.x > 0
     }
 
-    pub fn peek_in_dir(&self, direction: &Direction) -> Option<T> {
+    pub fn pos_in_dir(&self, direction: Direction) -> Option<UVec2> {
         let UVec2 { x, y } = self.position;
 
         match direction {
             Direction::Up => {
                 if self.can_move_up() {
-                    Some(self.matrix[y - 1][x])
+                    Some(UVec2 { x, y: y - 1 })
                 } else {
                     None
                 }
             }
             Direction::Right => {
                 if self.can_move_right() {
-                    Some(self.matrix[y][x + 1])
+                    Some(UVec2 { x: x + 1, y })
                 } else {
                     None
                 }
             }
             Direction::Down => {
                 if self.can_move_down() {
-                    Some(self.matrix[y + 1][x])
+                    Some(UVec2 { x, y: y + 1 })
                 } else {
                     None
                 }
             }
             Direction::Left => {
                 if self.can_move_left() {
-                    Some(self.matrix[y][x - 1])
+                    Some(UVec2 { x: x - 1, y })
                 } else {
                     None
                 }
             }
             Direction::UpLeft => {
                 if self.can_move_up() && self.can_move_left() {
-                    Some(self.matrix[y - 1][x - 1])
+                    Some(UVec2 { x: x - 1, y: y - 1 })
                 } else {
                     None
                 }
             }
             Direction::UpRight => {
                 if self.can_move_up() && self.can_move_right() {
-                    Some(self.matrix[y - 1][x + 1])
+                    Some(UVec2 { x: x + 1, y: y - 1 })
                 } else {
                     None
                 }
             }
             Direction::DownLeft => {
                 if self.can_move_down() && self.can_move_left() {
-                    Some(self.matrix[y + 1][x - 1])
+                    Some(UVec2 { x: x - 1, y: y + 1 })
                 } else {
                     None
                 }
             }
             Direction::DownRight => {
                 if self.can_move_down() && self.can_move_right() {
-                    Some(self.matrix[y + 1][x + 1])
+                    Some(UVec2 { x: x + 1, y: y + 1 })
                 } else {
                     None
                 }
@@ -130,52 +130,29 @@ where
         }
     }
 
-    pub fn move_in_dir(&mut self, direction: &Direction) {
-        match direction {
-            Direction::Up => {
-                if self.can_move_up() {
-                    self.position.y -= 1;
-                }
-            }
-            Direction::Right => {
-                if self.can_move_right() {
-                    self.position.x += 1;
-                }
-            }
-            Direction::Down => {
-                if self.can_move_down() {
-                    self.position.y += 1;
-                }
-            }
-            Direction::Left => {
-                if self.can_move_left() {
-                    self.position.x -= 1;
-                }
-            }
-            Direction::UpLeft => {
-                if self.can_move_up() && self.can_move_left() {
-                    self.position.y -= 1;
-                    self.position.x -= 1;
-                }
-            }
-            Direction::UpRight => {
-                if self.can_move_up() && self.can_move_right() {
-                    self.position.y -= 1;
-                    self.position.x += 1;
-                }
-            }
-            Direction::DownLeft => {
-                if self.can_move_down() && self.can_move_left() {
-                    self.position.y += 1;
-                    self.position.x -= 1;
-                }
-            }
-            Direction::DownRight => {
-                if self.can_move_down() && self.can_move_right() {
-                    self.position.y += 1;
-                    self.position.x += 1;
-                }
-            }
+    pub fn peek_in_dir(&self, direction: Direction) -> Option<T> {
+        let pos = self.pos_in_dir(direction);
+
+        match pos {
+            Some(pos) => Some(self.matrix[pos.y][pos.x]),
+            None => None,
         }
+    }
+
+    pub fn move_in_dir(&mut self, direction: Direction) {
+        if let Some(pos) = self.pos_in_dir(direction) {
+            self.position.x = pos.x;
+            self.position.y = pos.y
+        }
+    }
+
+    pub fn print(&self) {
+        println!(
+            "{}",
+            self.matrix
+                .iter()
+                .map(|row| row.into_iter().join(""))
+                .join("\n")
+        );
     }
 }
